@@ -1,0 +1,68 @@
+{
+  "name": "react-pagination-status",
+  "version": "1.1.2",
+  "description": "A pagination component for React",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test:watch": "cross-env NODE_ENV=test ./node_modules/.bin/mocha -w --recursive __test__/setup.js __test__/",
+    "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --recursive __test__/setup.js __test__/",
+    "start": "webpack-dev-server --devtool eval --progress --colors",
+    "build:demo": "cross-env NODE_ENV=production webpack --config ./webpack.prov.config.js",
+    "compile": "babel -d lib/ src/",
+    "lint": "./node_modules/.bin/eslint .",
+    "validate": "npm run lint && npm test",
+    "pre-push": "npm run build:demo",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/addhome2001/react-pagination-status.git"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "pagination",
+    "status"
+  ],
+  "author": "addhome2001",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/addhome2001/react-pagination-status/issues"
+  },
+  "homepage": "https://github.com/addhome2001/react-pagination-status#readme",
+  "engines": {
+    "node": ">=6.2.2",
+    "npm": ">=3.9.5"
+  },
+  "dependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-register": "^6.11.6",
+    "chai": "^3.5.0",
+    "enzyme": "^2.4.1",
+    "eslint": "^3.14.1",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0",
+    "jsdom-global": "^2.0.0",
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "sinon": "^1.17.5",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-runtime": "^6.12.0",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-runtime": "^6.11.6",
+    "cross-env": "^3.1.4",
+    "jsdom": "^9.4.2",
+    "mocha": "^3.0.2",
+    "react-addons-test-utils": "^15.3.1"
+  }
+}
