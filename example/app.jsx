@@ -10,7 +10,7 @@ class InputField extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state={
-			value:'' || this.props.text,
+			value: this.props.text,
 		}
 	}
 	handleChange(e) {
@@ -27,11 +27,11 @@ class InputField extends React.Component {
 	}
 	handleKeyDown(e, act){
 		switch (e.key) {
-			case'Enter':
+			case 'Enter':
 				console.log(e.key);
 				return this.props.onKeyDown(e.target.value);
 				break;
-			case'Escape':
+			case 'Escape':
 				return this.props.onBlur();
 				break;
 		}
@@ -169,6 +169,7 @@ export default class App extends React.Component {
       	</h1><hr />
       	<InputField
       	 act={'add'}
+      	 text={''}
       	 onBlur={()=>console.log('do nothing:這是父controller, 不想設onBlur, 卻因為所呼叫的子元件有onBlur event, 因此而跟著設定, 否則會出現Uncaught TypeError: _this2.props.onBlur is not a function')}
       	 onKeyDown={(val)=>this.addTodo(val)} />
   		<List
