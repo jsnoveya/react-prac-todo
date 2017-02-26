@@ -37,6 +37,9 @@ class InputField extends React.Component {
 		}
 		console.log(e.key);
 	}
+	handleBlur(e){
+		this.props.onBlur===undefined? e.preventDefault(): this.props.onBlur()
+	}
 	render() {
 		return (
 			<input
@@ -45,7 +48,7 @@ class InputField extends React.Component {
 			 onChange={(e)=>this.handleChange(e)}
 			 onMouseDown={(e)=>this.handleMouseDown(e,this.props.act)}
 			 onKeyDown={(e)=>this.handleKeyDown(e, this.props.act)}
-			 onBlur={(e)=>this.props.onBlur()}
+			 onBlur={(e)=>this.handleBlur(e)}
 			 autoFocus
 			 />
 		)
@@ -170,7 +173,6 @@ export default class App extends React.Component {
       	<InputField
       	 act={'add'}
       	 text={''}
-      	 onBlur={()=>console.log('do nothing:這是父controller, 不想設onBlur, 卻因為所呼叫的子元件有onBlur event, 因此而跟著設定, 否則會出現Uncaught TypeError: _this2.props.onBlur is not a function')}
       	 onKeyDown={(val)=>this.addTodo(val)} />
   		<List
   		 todos={this.state.todos}
