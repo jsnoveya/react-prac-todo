@@ -14,16 +14,18 @@ function HOCfollowOnBlur(WrappedComponent) {
 	return class extends React.Component {
 		constructor(props) {
 			super(props);
-			this.state={
-				hh:'99',
-			}
 		}
 
 		render() {
+			const events= {
+				'onBlur': this.props.onBlur,
+			}
+			// https://discuss.reactjs.org/t/best-practices-for-hocs-that-apply-dom-events/4587/5
+
 			console.log('fn: '+this.props.onBlur);
-			return (this.props.onBlur)?
+			return (events.onBlur)?
 				<WrappedComponent {...this.state} {...this.props}
-				 onBlur={this.props.onBlur} />:
+				 events={events} />:
 				<WrappedComponent {...this.props} />
 		}
 	}
@@ -76,6 +78,7 @@ class InputField extends React.Component {
 			 onMouseDown={(e)=>this.handleMouseDown(e,this.props.act)}
 			 onKeyDown={(e)=>this.handleKeyDown(e, this.props.act)}
 			 autoFocus
+			 {...this.props.events}
 			 />
 		)
 	}
