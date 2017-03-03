@@ -5,6 +5,34 @@ function Button (props) {
 		<button onClick={()=>props.onClick()}>{props.btnText}</button>
 	)
 }
+Button.propTypes = {
+	btnText: React.PropTypes.string.isRequired,
+	onClick: React.PropTypes.func,
+}
+
+function HOCfollowOnBlur(WrappedComponent) {
+	return class extends React.Component {
+		constructor(props) {
+			super(props);
+			this.state={
+				hh:'99',
+			}
+		}
+
+		render() {
+			console.log('fn: '+this.props.onBlur);
+			return (this.props.onBlur)?
+				<WrappedComponent {...this.state} {...this.props}
+				 onBlur={this.props.onBlur} />:
+				<WrappedComponent {...this.props} />
+		}
+	}
+}
+HOCfollowOnBlur.propTypes = {
+	act: React.PropTypes.string,
+	onKeyDown: React.PropTypes.func,
+	text: React.PropTypes.string,
+}
 
 class InputField extends React.Component {
 	constructor(props) {
@@ -37,10 +65,9 @@ class InputField extends React.Component {
 		}
 		console.log(e.key);
 	}
-	handleBlur(e){
-		this.props.onBlur===undefined? e.preventDefault(): this.props.onBlur()
-	}
+
 	render() {
+
 		return (
 			<input
 			 placeholder="pls key in your todo item"
@@ -48,12 +75,17 @@ class InputField extends React.Component {
 			 onChange={(e)=>this.handleChange(e)}
 			 onMouseDown={(e)=>this.handleMouseDown(e,this.props.act)}
 			 onKeyDown={(e)=>this.handleKeyDown(e, this.props.act)}
-			 onBlur={(e)=>this.handleBlur(e)}
 			 autoFocus
 			 />
 		)
 	}
 }
+InputField.propTypes = {
+	act: React.PropTypes.string,
+	onKeyDown: React.PropTypes.func,
+	text: React.PropTypes.string.isRequired
+};
+
 class Item extends React.Component {
 	constructor(props) {
 		super(props);
@@ -77,9 +109,11 @@ class Item extends React.Component {
 			</div>
 		)
 	}
+
 	renderEdit() {
+		const WrapInputField=HOCfollowOnBlur(InputField);
 		return (
-			<InputField
+			<WrapInputField
 			 text={this.props.text}
 			 onKeyDown={(value)=>this.props.onKeyDown(value)}
 			 onBlur={()=>this.toggleMode()}
@@ -90,6 +124,11 @@ class Item extends React.Component {
 		return (this.state.isEditable)? this.renderEdit(): this.renderShow()
 	}
 }
+Item.propTypes = {
+	onClick: React.PropTypes.func,
+	onKeyDown: React.PropTypes.func,
+	text: React.PropTypes.string,
+};
 
 class List extends React.Component {
 	constructor(props) {
@@ -116,7 +155,11 @@ class List extends React.Component {
 		)
 	}
 }
-
+List.propTypes = {
+	onClick: React.PropTypes.func,
+	onKeyDown: React.PropTypes.func,
+	todos: React.PropTypes.array,
+};
 
 export default class App extends React.Component {
 
@@ -161,6 +204,7 @@ export default class App extends React.Component {
   render() {
   	console.log(this.state.todos);
   	const count_num=this.state.todos.length;
+  	const WrapInputField=HOCfollowOnBlur(InputField);
 
   	return (
       <div>
@@ -170,7 +214,7 @@ export default class App extends React.Component {
 			 onClick={()=>this.delAllTodo()}
 			/>
       	</h1><hr />
-      	<InputField
+      	<WrapInputField
       	 act={'add'}
       	 text={''}
       	 onKeyDown={(val)=>this.addTodo(val)} />
