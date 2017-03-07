@@ -2,7 +2,7 @@ import React from 'react';
 
 function Button (props) {
 	return (
-		<button onClick={()=>props.onClick()}>{props.btnText}</button>
+		<button onClick={props.onClick}>{props.btnText}</button>
 	)
 }
 Button.propTypes = {
@@ -11,29 +11,29 @@ Button.propTypes = {
 }
 
 function HOCfollowOnBlur(WrappedComponent) {
+
 	return class extends React.Component {
 		constructor(props) {
 			super(props);
+			this.handleBlur=this.handleBlur.bind(this);
 		}
 
-		render() {
-			const events= {
-				'onBlur': this.props.onBlur,
-			}
-			// https://discuss.reactjs.org/t/best-practices-for-hocs-that-apply-dom-events/4587/5
+		static propTypes = {
+			onBlur: React.PropTypes.func,
+		}
 
-			console.log('fn: '+this.props.onBlur);
-			return (events.onBlur)?
-				<WrappedComponent {...this.state} {...this.props}
-				 events={events} />:
-				<WrappedComponent {...this.props} />
+		handleBlur(e){
+			this.props.onBlur && this.props.onBlur()
+		}
+		render() {
+			const {onBlur, ...otherProps}=this.props;
+			return (
+				<WrappedComponent
+				 onBlur={this.handleBlur}
+				 {...otherProps} />
+			)
 		}
 	}
-}
-HOCfollowOnBlur.propTypes = {
-	act: React.PropTypes.string,
-	onKeyDown: React.PropTypes.func,
-	text: React.PropTypes.string,
 }
 
 class InputField extends React.Component {
@@ -42,20 +42,23 @@ class InputField extends React.Component {
 		this.state={
 			value: this.props.text,
 		}
+		this.handleChange=this.handleChange.bind(this);
+		this.handleMouseDown=this.handleMouseDown.bind(this);
+		this.handleKeyDown=this.handleKeyDown.bind(this);
 	}
 	handleChange(e) {
 		this.setState({
 			value: e.target.value,
 		})
 	}
-	handleMouseDown(e, act) {
-		if ((act==='add') && (e.button===2)) {
+	handleMouseDown(e) {
+		if ((this.props.act==='add') && (e.button===2)) {
 			this.setState({
 				value: '',
 			})
 		}
 	}
-	handleKeyDown(e, act){
+	handleKeyDown(e){
 		switch (e.key) {
 			case 'Enter':
 				console.log(e.key);
@@ -69,16 +72,15 @@ class InputField extends React.Component {
 	}
 
 	render() {
-
 		return (
 			<input
 			 placeholder="pls key in your todo item"
 			 value={this.state.value}
-			 onChange={(e)=>this.handleChange(e)}
-			 onMouseDown={(e)=>this.handleMouseDown(e,this.props.act)}
-			 onKeyDown={(e)=>this.handleKeyDown(e, this.props.act)}
+			 onChange={this.handleChange}
+			 onMouseDown={this.handleMouseDown}
+			 onKeyDown={this.handleKeyDown}
+			 onBlur={this.props.onBlur}
 			 autoFocus
-			 {...this.props.events}
 			 />
 		)
 	}
@@ -95,6 +97,7 @@ class Item extends React.Component {
 		this.state={
 			isEditable: false,
 		}
+		this.toggleMode=this.toggleMode.bind(this);
 	}
 	toggleMode() {
 		this.setState({
@@ -104,10 +107,10 @@ class Item extends React.Component {
 	renderShow() {
 		return (
 			<div>
-				<span onDoubleClick={()=>this.toggleMode()}>{this.props.text}</span>
+				<span onDoubleClick={this.toggleMode}>{this.props.text}</span>
 				<Button
 				 btnText='del'
-				 onClick={()=>this.props.onClick()}
+				 onClick={this.props.onClick}
 				 />
 			</div>
 		)
@@ -119,7 +122,7 @@ class Item extends React.Component {
 			<WrapInputField
 			 text={this.props.text}
 			 onKeyDown={(value)=>this.props.onKeyDown(value)}
-			 onBlur={()=>this.toggleMode()}
+			 onBlur={this.toggleMode}
 			 />
 		)
 	}
@@ -207,7 +210,6 @@ export default class App extends React.Component {
   render() {
   	console.log(this.state.todos);
   	const count_num=this.state.todos.length;
-  	const WrapInputField=HOCfollowOnBlur(InputField);
 
   	return (
       <div>
@@ -217,9 +219,9 @@ export default class App extends React.Component {
 			 onClick={()=>this.delAllTodo()}
 			/>
       	</h1><hr />
-      	<WrapInputField
-      	 act={'add'}
-      	 text={''}
+      	<InputField
+      	 act='add'
+      	 text=''
       	 onKeyDown={(val)=>this.addTodo(val)} />
   		<List
   		 todos={this.state.todos}
